@@ -1,5 +1,4 @@
-from masks import get_mask_account
-from masks import get_mask_card_number
+from src.masks import get_mask_account, get_mask_card_number
 
 
 def mask_account_card(account: str) -> str:
@@ -14,14 +13,8 @@ def mask_account_card(account: str) -> str:
         return f"{card_name} {get_mask_card_number(card_number)}"
 
 
-print(mask_account_card("Visa Platinum 7000792289606361"))
-
-
 def get_date(date: str) -> str:
     """Функция, которая принимает на вход строку с датой, а возвращает в формате даты"""
     date_split = date.split("T")[0]
     year, month, day = date_split.split("-")
     return f"{day}.{month}.{year}"
-
-
-print(get_date("2024-03-11T02:26:18.671407"))
