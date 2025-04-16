@@ -12,15 +12,9 @@ def get_mask_card_number(card_number: int | str) -> str:
     return f"{number_part_1} {number_part_2} {number_part_3} {number_part_4}"
 
 
-print(get_mask_card_number(12344108430135874305))
-
-
 def get_mask_account(account_number: int | str) -> str:
     """Преобразуем номер счёта в строку и удаляем пробелы"""
     account_str = str(account_number).replace(" ", "")
 
     """Возвращаем маску: две звёздочки и последние 4 цифры"""
     return f"**{account_str[-4:]}"
-
-
-print(get_mask_account(73654108430135874305))
