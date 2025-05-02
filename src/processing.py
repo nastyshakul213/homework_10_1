@@ -21,7 +21,15 @@ def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[d
     return filtered_transactions
 
 
-def sort_by_date(info_list: List[Dict], reverse: bool = True) -> List[Dict]:
-    """Сортирует список операций по дате (date)"""
+def sort_by_date(info_list: List[Dict]) -> List[Dict]:
+    """Сортирует список операций по дате (date)
 
-    return sorted(info_list, key=lambda x: x["date"], reverse=True)
+    Параметры:
+    - info_list: Список словарей.
+    - sorted: Сортирует любую коллекцию.
+
+    Возвращает:
+    - Новый список, отсортированный  по дате (date)
+    """
+
+    return sorted(info_list, key=lambda x: x["date"], reverse=False)
