@@ -1,5 +1,5 @@
 from typing import Dict, List
-
+from datetime import datetime
 
 def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[dict]:
     """
@@ -12,6 +12,9 @@ def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[d
     Возвращает:
     - Новый список, содержащий только операции с указанным статусом.
     """
+    if not isinstance(transactions, list):
+        raise ValueError("Ошибка, нужно передать список операций.")
+
     filtered_transactions = []
 
     for transaction in transactions:
@@ -21,7 +24,7 @@ def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[d
     return filtered_transactions
 
 
-def sort_by_date(info_list: List[Dict]) -> List[Dict]:
+def sort_by_date(info_list: List[Dict], reverse: bool = True) -> List[Dict]:
     """Сортирует список операций по дате (date)
 
     Параметры:
@@ -30,6 +33,24 @@ def sort_by_date(info_list: List[Dict]) -> List[Dict]:
 
     Возвращает:
     - Новый список, отсортированный  по дате (date)
+
+    Исключения:
+        TypeError: Если info_list не является списком.
+        KeyError: Если какой-то словарь не содержит ключа 'date'.
+        ValueError: Если дата в неверном формате.
     """
 
-    return sorted(info_list, key=lambda x: x["date"], reverse=False)
+    if not isinstance(info_list, list):
+        raise TypeError("Данные должны быть списком")
+
+    try:
+        return sorted(
+            info_list,
+            key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d"),
+            reverse=reverse
+        )
+    except KeyError as e:
+        raise KeyError(f"Отсутствует обязательный ключ 'date' в одном из элементов: {e}")
+    except ValueError as e:
+        raise ValueError(f"Неверный формат даты. Ожидается YYYY-MM-DD: {e}")
+
