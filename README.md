@@ -10,3 +10,9 @@
 ```
 git clone https://github.com/username/myblog.git
 ``
+## Проверка:
+
+1. Чтобы создать отчет о покрытиина местном уровне
+```bash
+./generate_coverage.sh
+open htmlcov/index.html 

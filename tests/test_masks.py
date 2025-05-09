@@ -1,8 +1,8 @@
 from src.masks import get_mask_card_number, get_mask_account
 import pytest
 
-def test_get_mask_card_number():
-    assert get_mask_card_number("1234567890123456") == "1234 56** **** 3456"
+def test_get_mask_card_number(number):
+    assert get_mask_card_number("1234567890123456") == number
 
     with pytest.raises(ValueError):
         get_mask_card_number("12345678") == "Номер карты должен содержать минимум 16 цифр"
@@ -15,7 +15,7 @@ def test_get_mask_card_number():
 
 
 
-def test_get_mask_account():
+def test_get_mask_account(number):
     assert get_mask_account("1234 5678 1234 4567 1234") == "**1234"
 
     with pytest.raises(ValueError):
