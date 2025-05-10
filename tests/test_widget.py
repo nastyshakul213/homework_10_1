@@ -1,19 +1,17 @@
 from src.widget import mask_account_card, get_date
 import pytest
 
+@pytest.mark.parametrize("value, expected", [
+    ("Visa Platinum 1234567890123456", "Visa Platinum 1234 56** **** 3456"),
+    ("Mastercard 1234 5678 9012 3456", "Mastercard 1234 56** **** 3456"),
+    ("Счет 12345678901234567890", "Счет **7890"),
+    ("Счет 1234", "Счет **1234"),
+    ("American Express 123456789012345", "American Express **2345"),
+    ("Карта 12 34 56 78 9012 3456", "Карта 1234 56** **** 3456"),
+])
 
-def test_mask_account_card():
-    assert mask_account_card("Visa Platinum 1234567890123456") == "Visa Platinum 1234 56** **** 3456"
-
-    assert mask_account_card("Mastercard 1234 5678 9012 3456") == "Mastercard 1234 56** **** 3456"
-
-    assert mask_account_card("Счет 12345678901234567890") == "Счет **7890"
-
-    assert mask_account_card("Счет 1234") == "Счет **1234"
-
-    assert mask_account_card("American Express 123456789012345") == "American Express **2345"
-
-    assert mask_account_card("Карта 12 34 56 78 9012 3456") == "Карта 1234 56** **** 3456"
+def test_mask_account_card(value, expected):
+    assert mask_account_card(value) == expected
 
     with pytest.raises(ValueError):
         mask_account_card("Visa 123") == "Номер должен содержать минимум 4 цифры"
@@ -30,11 +28,12 @@ def test_mask_account_card():
     with pytest.raises(ValueError):
         mask_account_card("1234567890123456") == "Некорректный формат данных. Ожидается 'Тип Номер'"
 
-
-def test_get_date():
-    assert get_date("2023-12-31T23:59:59") == "31.12.2023"
-
-    assert get_date("2023-01-15") == "15.01.2023"
+@pytest.mark.parametrize(date_1, date_2, [
+    ("2023-12-31T23:59:59", "31.12.2023"),
+    ("2023-01-15", "15.01.2023")
+])
+def test_get_date(date_1, date_2):
+    assert get_date(date_1) == date_2
 
     with pytest.raises(TypeError):
         get_date(123456789) == "Входные данные должны быть строкой"
