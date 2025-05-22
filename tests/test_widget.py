@@ -28,12 +28,12 @@ def test_mask_account_card(value, expected):
     with pytest.raises(ValueError):
         mask_account_card("1234567890123456") == "Некорректный формат данных. Ожидается 'Тип Номер'"
 
-@pytest.mark.parametrize(date_1, date_2, [
-    ("2023-12-31T23:59:59", "31.12.2023"),
+@pytest.mark.parametrize("date_one, date_two", [
+    ("2023-12-31", "31.12.2023"),
     ("2023-01-15", "15.01.2023")
 ])
-def test_get_date(date_1, date_2):
-    assert get_date(date_1) == date_2
+def test_get_date(date_one, date_two):
+    assert get_date(date_one) == date_two
 
     with pytest.raises(TypeError):
         get_date(123456789) == "Входные данные должны быть строкой"

@@ -21,8 +21,6 @@ def get_mask_card_number(card_number: int | str) -> str:
     return f"{number_part_1} {number_part_2} {number_part_3} {number_part_4}"
 
 
-
-
 def get_mask_account(account_number: int | str) -> str:
     """Преобразуем номер счёта в строку и удаляем пробелы,
     Возвращаем маску: две звёздочки и последние 4 цифры
@@ -37,6 +35,5 @@ def get_mask_account(account_number: int | str) -> str:
 
     if account_number is None:
         raise ValueError("Номер счёта не может быть пустым")
-
 
     return f"**{account_str[-4:]}"

@@ -1,6 +1,7 @@
 from typing import Dict, List
 from datetime import datetime
 
+
 def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[dict]:
     """
     Фильтрует список операций по статусу (state).
@@ -44,13 +45,8 @@ def sort_by_date(info_list: List[Dict], reverse: bool = True) -> List[Dict]:
         raise TypeError("Данные должны быть списком")
 
     try:
-        return sorted(
-            info_list,
-            key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d"),
-            reverse=reverse
-        )
+        return sorted(info_list, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d"), reverse=reverse)
     except KeyError as e:
         raise KeyError(f"Отсутствует обязательный ключ 'date' в одном из элементов: {e}")
     except ValueError as e:
         raise ValueError(f"Неверный формат даты. Ожидается YYYY-MM-DD: {e}")
-

@@ -15,3 +15,8 @@ git clone https://github.com/username/myblog.git
 ```
 pytest --cov=src --cov-report=html  
 ```
+3. Модуль для работы с банковскими транзакциями и генерации номеров карт.
+Функции модуля : filter_by_currency, transaction_descriptions, card_number_generator.
+Функция filter_by_currency: возвращает итератор, который выдает транзакции с указанно валютой.
+Функция transaction_descriptions: возвращает итератов, который поочередно выдает описания транзакций.
+Функция card_number_generator: возвращает итератов, который выдает номера карт в формате "XXXX XXXX XXXX XXXX"

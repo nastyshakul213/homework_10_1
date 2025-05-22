@@ -22,8 +22,8 @@ def mask_account_card(account: str) -> str:
     if len(parts) < 2:
         raise ValueError("Некорректный формат данных. Ожидается 'Тип Номер'")
 
-    number = ''.join([p for p in parts if p.isdigit()])
-    account_type = ' '.join([p for p in parts if not p.isdigit()])
+    number = "".join([p for p in parts if p.isdigit()])
+    account_type = " ".join([p for p in parts if not p.isdigit()])
 
     if not number.isdigit():
         raise ValueError("Номер должен содержать только цифры")
@@ -36,7 +36,6 @@ def mask_account_card(account: str) -> str:
         return f"{account_type} **{number[-4:]}"
 
     raise ValueError("Номер должен содержать минимум 4 цифры")
-
 
 
 def get_date(date_str: str) -> str:
@@ -67,6 +66,3 @@ def get_date(date_str: str) -> str:
         raise ValueError("Неверный формат даты. Ожидается YYYY-MM-DD или YYYY-MM-DDTHH:MM:SS")
     except Exception as e:
         raise ValueError(f"Ошибка преобразования даты: {e}")
-
-
-
