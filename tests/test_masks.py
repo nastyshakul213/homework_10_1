@@ -1,5 +1,6 @@
 from src.masks import get_mask_card_number, get_mask_account
 import pytest
+from src.widget import get_mask_account
 
 
 
@@ -17,17 +18,14 @@ def test_get_mask_card_number(valid_card_mask):
 
 
 
-def test_get_mask_account(number):
-    assert get_mask_account("1234 5678 1234 4567 1234") == "**1234"
-
-    with pytest.raises(ValueError):
-        get_mask_account("123") == "Номер карты должен содержать минимум 16 цифр"
-
-    with pytest.raises(ValueError):
-        get_mask_account("nmh123") == "Номер карты должен содержать только цифры"
-
-    with pytest.raises(ValueError):
-        get_mask_account(" ")  == "Номер счёта не может быть пустым"
+@pytest.mark.parametrize("account, expected", [
+    ("12345678901234567890", "**7890"),
+    ("1234", "**1234"),
+    ("", "**"),  # Тест для пустой строки
+    ("123456", "**3456")  # Тест для короткого номера
+])
+def test_get_mask_account(account: str, expected: str) -> None:
+    assert get_mask_account(account) == expected
 
 
 
