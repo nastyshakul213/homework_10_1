@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
-BASE_URL = "https://api.apilayer.com/exchangerates_data/latest"
+BASE_URL = "https://apilayer.com/exchangerates_data-api"
 
 def convert_to_rub(transaction: Dict) -> float:
     try:
@@ -34,3 +34,4 @@ def convert_to_rub(transaction: Dict) -> float:
         raise ValueError(f"Missing field: {e}")
     except requests.exceptions.RequestException as e:
         raise ValueError(f"API error: {str(e)}")
+
