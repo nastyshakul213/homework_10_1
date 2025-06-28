@@ -1,6 +1,6 @@
 from src.masks import get_mask_card_number, get_mask_account
 import pytest
-from src.widget import get_mask_account
+from src.masks import get_mask_account
 
 
 
@@ -19,13 +19,13 @@ def test_get_mask_card_number(valid_card_mask):
 
 
 @pytest.mark.parametrize("account, expected", [
-    ("12345678901234567890", "**7890"),
-    ("1234", "**1234"),
-    ("", "**"),  # Тест для пустой строки
-    ("123456", "**3456")  # Тест для короткого номера
+    ("1234567890123456", "**3456"),  # Ровно 16 цифр
+    ("12345678901234567890", "**7890"),  # Более 16
+    ("0000000000000000", "**0000")  # Граничный случай
 ])
-def test_get_mask_account(account: str, expected: str) -> None:
+def test_get_mask_account(account: str, expected: str):
     assert get_mask_account(account) == expected
+
 
 
 

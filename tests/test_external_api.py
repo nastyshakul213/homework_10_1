@@ -1,58 +1,119 @@
 import unittest
-from unittest.mock import patch, MagicMock
-
-
-# Импортируем модуль и requests отдельно
-from src.external_api import convert_to_rub, BASE_URL, API_KEY
+from unittest.mock import patch, Mock
 import requests
+from src.external_api import convert_to_rub
 
 
-class TestCurrencyConversion(unittest.TestCase):
-    def test_rub_transaction(self):
-        transaction = {"amount": "100", "currency": "RUB"}
-        self.assertEqual(convert_to_rub(transaction), 100.0)
+class TestCurrencyConverter(unittest.TestCase):
+    def setUp(self):
+        # Валидная транзакция в USD
+        self.valid_usd_transaction = {
+            "operationAmount": {
+                "amount": "100.0",
+                "currency": {"code": "USD"}
+            }
+        }
+
+        # Транзакция в RUB (не требует конвертации)
+        self.rub_transaction = {
+            "operationAmount": {
+                "amount": "500.0",
+                "currency": {"code": "RUB"}
+            }
+        }
+
+        # Транзакция с отсутствующим amount
+        self.missing_amount_transaction = {
+            "operationAmount": {
+                "currency": {"code": "USD"}
+            }
+        }
+
+        # Транзакция с неподдерживаемой валютой
+        self.unsupported_currency_transaction = {
+            "operationAmount": {
+                "amount": "200.0",
+                "currency": {"code": "GBP"}
+            }
+        }
 
     @patch('src.external_api.requests.get')
-    def test_usd_conversion(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"rates": {"RUB": 75.0}}
+    @patch('src.external_api.get_api_key')
+    def test_convert_usd_to_rub_success(self, mock_get_key, mock_get):
+        """Тест успешной конвертации USD в RUB."""
+        # Настраиваем моки
+        mock_get_key.return_value = 'fake_api_key'
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "rates": {"RUB": 75.50}
+        }
         mock_get.return_value = mock_response
 
-        transaction = {"amount": "10", "currency": "USD"}
-        self.assertEqual(convert_to_rub(transaction), 750.0)
-        mock_get.assert_called_once()
+        # Вызываем тестируемую функцию
+        result = convert_to_rub(self.valid_usd_transaction)
+
+        # Проверяем результат
+        self.assertEqual(result, 7550.0)
+
+    @patch('src.external_api.get_api_key')
+    def test_convert_rub_to_rub(self, mock_get_key):
+        """Тест транзакции в RUB (конвертация не требуется)."""
+        mock_get_key.return_value = 'fake_api_key'
+        result = convert_to_rub(self.rub_transaction)
+        self.assertEqual(result, 500.0)
 
     @patch('src.external_api.requests.get')
-    def test_api_failure(self, mock_get):
-        """Тест обработки ошибки соединения с API"""
-        # 1. Подготовка тестовых данных
-        test_amount = "100"
-        test_currency = "USD"
-        transaction = {"amount": test_amount, "currency": test_currency}
-        expected_error_msg = "API error: Connection timeout"
+    @patch('src.external_api.get_api_key')
+    def test_api_error_response(self, mock_get_key, mock_get):
+        """Тест обработки ошибки API."""
+        mock_get_key.return_value = 'fake_api_key'
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": False,
+            "error": {"info": "Invalid API key"}
+        }
+        mock_get.return_value = mock_response
 
-        # 2. Настройка мока
-        mock_get.side_effect = requests.exceptions.RequestException("Connection timeout")
-
-        # 3. Выполнение и проверки
         with self.assertRaises(ValueError) as context:
-            convert_to_rub(transaction)
+            convert_to_rub(self.valid_usd_transaction)
+        self.assertIn("API error", str(context.exception))
 
-        # 4. Проверка сообщения об ошибке
-        self.assertIn(expected_error_msg, str(context.exception))
+    @patch('src.external_api.requests.get')
+    @patch('src.external_api.get_api_key')
+    def test_api_connection_error(self, mock_get_key, mock_get):
+        """Тест ошибки соединения с API."""
+        mock_get_key.return_value = 'fake_api_key'
+        mock_get.side_effect = requests.exceptions.RequestException("Timeout")
 
-        # 5. Проверка параметров вызова
-        mock_get.assert_called_once_with(
-            BASE_URL,
-            params={"base": test_currency, "symbols": "RUB"},
-            headers={"apikey": API_KEY},
-            timeout=10
-        )
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(self.valid_usd_transaction)
+        self.assertIn("API connection error", str(context.exception))
+
+    @patch('src.external_api.get_api_key')
+    def test_missing_amount_field(self, mock_get_key):
+        """Тест отсутствия обязательного поля amount."""
+        mock_get_key.return_value = 'fake_api_key'
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(self.missing_amount_transaction)
+        self.assertIn("Missing required field", str(context.exception))
+
+    @patch('src.external_api.get_api_key')
+    def test_unsupported_currency(self, mock_get_key):
+        """Тест неподдерживаемой валюты."""
+        mock_get_key.return_value = 'fake_api_key'
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(self.unsupported_currency_transaction)
+        self.assertIn("Unsupported currency", str(context.exception))
+
+    @patch('src.external_api.get_api_key')
+    def test_missing_api_key(self, mock_get_key):
+        """Тест отсутствия API-ключа."""
+        mock_get_key.return_value = None
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(self.valid_usd_transaction)
+        self.assertIn("API key not configured", str(context.exception))
 
 
-if __name__ == '__main__':
-    unittest.main()
-
-
-
+# if __name__ == '__main__':
+#     unittest.main()

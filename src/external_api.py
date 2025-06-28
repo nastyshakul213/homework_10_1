@@ -1,37 +1,56 @@
 import os
 import requests
 from typing import Dict
-from dotenv import load_dotenv
 
-load_dotenv()
+def get_api_key():
+    """Функция для получения API ключа"""
+    return os.getenv('EXCHANGE_RATE_API_KEY')
 
-API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
-BASE_URL = "https://apilayer.com/exchangerates_data-api"
+BASE_URL = "https://api.apilayer.com/exchangerates_data/latest"
+BASE_CURRENCY = "RUB"
+SUPPORTED_CURRENCIES = ("USD", "EUR")
 
 def convert_to_rub(transaction: Dict) -> float:
+    """Конвертирует сумму транзакции из исходной валюты в рубли по текущему курсу."""
     try:
-        amount = float(transaction["amount"])
-        currency = transaction["currency"].upper()
+        api_key = get_api_key()
+        if not api_key:
+            raise ValueError("API key not configured")
 
-        if currency == "RUB":
+        # Остальной код функции остается без изменений
+        amount = float(transaction["operationAmount"]["amount"])
+        currency = transaction["operationAmount"]["currency"]["code"].upper()
+
+        if currency == BASE_CURRENCY:
             return amount
 
-        if currency not in ("USD", "EUR"):
+        if currency not in SUPPORTED_CURRENCIES:
             raise ValueError(f"Unsupported currency: {currency}")
 
         response = requests.get(
             BASE_URL,
-            params={"base": currency, "symbols": "RUB"},
-            headers={"apikey": API_KEY},
+            params={'base': currency, 'symbols': BASE_CURRENCY},
+            headers={'apikey': api_key},
             timeout=10
         )
+
         response.raise_for_status()
 
-        rate = response.json()["rates"]["RUB"]
-        return round(amount * rate, 2)
+        try:
+            data = response.json()
+        except ValueError as e:
+            raise ValueError(f"Invalid API response (not JSON): {str(e)}")
+
+        if not data.get('success', False):
+            error_info = data.get('error', {}).get('info', 'Unknown API error')
+            raise ValueError(f"API error: {error_info}")
+
+        if 'rates' not in data or BASE_CURRENCY not in data['rates']:
+            raise ValueError("Invalid API response format")
+
+        return round(amount * data['rates'][BASE_CURRENCY], 2)
 
     except KeyError as e:
-        raise ValueError(f"Missing field: {e}")
+        raise ValueError(f"Missing required field in transaction: {e}")
     except requests.exceptions.RequestException as e:
-        raise ValueError(f"API error: {str(e)}")
-
+        raise ValueError(f"API connection error: {str(e)}")
