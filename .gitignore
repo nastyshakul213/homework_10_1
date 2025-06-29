@@ -128,7 +128,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-
+.env
 .venv
 .venv/
 env/
@@ -175,3 +175,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 **/__pycache__/
+__pycache__
+
