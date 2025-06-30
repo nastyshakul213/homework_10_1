@@ -1,0 +1,28 @@
+2025-06-30 22:47:36,454 - masks - INFO - Тестовое сообщение
+2025-06-30 22:47:36,454 - masks - INFO - 
+Тестирование маскирования карт:
+2025-06-30 22:47:36,454 - masks - DEBUG - Начало обработки номера карты: 1234567890123456
+2025-06-30 22:47:36,454 - masks - INFO - Сформирована маска карты: 1234 56** **** 3456
+2025-06-30 22:47:36,454 - masks - DEBUG - Начало обработки номера карты: 1234 5678 9012 3456
+2025-06-30 22:47:36,455 - masks - INFO - Сформирована маска карты: 1234 56** **** 3456
+2025-06-30 22:47:36,455 - masks - DEBUG - Начало обработки номера карты: 123456789012345
+2025-06-30 22:47:36,455 - masks - ERROR - Номер карты должен содержать минимум 16 цифр
+2025-06-30 22:47:36,455 - masks - ERROR - Ошибка при маскировании номера карты
+Traceback (most recent call last):
+  File "C:\Users\advan\PycharmProjects\PythonProject1\src\masks.py", line 37, in get_mask_card_number
+    raise ValueError(error_msg)
+ValueError: Номер карты должен содержать минимум 16 цифр
+2025-06-30 22:47:36,485 - masks - DEBUG - Начало обработки номера карты: 1234abcd56789012
+2025-06-30 22:47:36,486 - masks - ERROR - Номер карты должен содержать только цифры
+2025-06-30 22:47:36,486 - masks - ERROR - Ошибка при маскировании номера карты
+Traceback (most recent call last):
+  File "C:\Users\advan\PycharmProjects\PythonProject1\src\masks.py", line 42, in get_mask_card_number
+    raise ValueError(error_msg)
+ValueError: Номер карты должен содержать только цифры
+2025-06-30 22:47:36,486 - masks - DEBUG - Начало обработки номера карты: None
+2025-06-30 22:47:36,486 - masks - ERROR - Номер карты не может быть None
+2025-06-30 22:47:36,487 - masks - ERROR - Ошибка при маскировании номера карты
+Traceback (most recent call last):
+  File "C:\Users\advan\PycharmProjects\PythonProject1\src\masks.py", line 32, in get_mask_card_number
+    raise ValueError(error_msg)
+ValueError: Номер карты не может быть None
