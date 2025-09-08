@@ -1,0 +1,6 @@
+2025-06-30 21:44:37,336 - utils - DEBUG - Запуск обработки транзакций
+2025-06-30 21:44:37,336 - utils - INFO - Начало обработки файла: operations.json
+2025-06-30 21:44:37,336 - utils - DEBUG - Абсолютный путь к файлу: C:\Users\advan\PycharmProjects\PythonProject1\src\operations.json
+2025-06-30 21:44:37,337 - utils - ERROR - Файл не найден: C:\Users\advan\PycharmProjects\PythonProject1\src\operations.json
+2025-06-30 21:44:37,337 - utils - INFO - Итоговое количество обработанных транзакций: 0
+2025-06-30 21:44:37,337 - utils - INFO - Завершение работы программы
